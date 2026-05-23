@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<title>全球指数</title>
+
+<style>
+body{
+    font-family: Arial;
+    max-width: 800px;
+    margin: 40px auto;
+}
+
+.card{
+    border:1px solid #ddd;
+    padding:15px;
+    margin-bottom:10px;
+    border-radius:10px;
+}
+</style>
+
+</head>
+<body>
+
+<h1>全球指数</h1>
+
+<div id="app"></div>
+
+<script>
+
+fetch('./data.json')
+.then(r => r.json())
+.then(data => {
+
+    const app = document.getElementById('app')
+
+    data.forEach(item => {
+
+        app.innerHTML += `
+            <div class="card">
+                <h2>${item.name}</h2>
+                <p>最新: ${item.price}</p>
+                <p>涨跌: ${item.change}</p>
+                <p>涨幅: ${item.percent}%</p>
+                <p>更新时间: ${item.time}</p>
+            </div>
+        `
+    })
+})
+
+</script>
+
+</body>
+</html>
