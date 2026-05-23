@@ -1,0 +1,39 @@
+name: update-index
+
+on:
+  schedule:
+    - cron: "* */1 * * *"
+
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: install requests
+        run: pip install requests
+
+      - name: run fetch
+        run: python fetch.py
+
+      - name: commit changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+          git add docs/data.json
+
+          git commit -m "update data" || echo "no changes"
+
+          git push
