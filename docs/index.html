@@ -5,10 +5,12 @@
 <title>全球指数</title>
 
 <style>
+/* 基础样式 */
 body{
     font-family: Arial;
     max-width: 800px;
     margin: 40px auto;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .card{
@@ -16,26 +18,109 @@ body{
     padding:15px;
     margin-bottom:10px;
     border-radius:10px;
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+/* 图标切换按钮 */
+.mode-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 42px;
+    height: 42px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: #007bff;
+    color: white;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.mode-toggle:hover {
+    transform: scale(1.08);
+}
+
+/* 太阳 / 月亮 图标 */
+.mode-toggle .icon {
+    display: inline-block;
+    transition: transform 0.3s;
+}
+
+/* 白天显示月亮图标 */
+body:not(.dark-mode) .mode-toggle .moon {
+    display: inline-block;
+}
+body:not(.dark-mode) .mode-toggle .sun {
+    display: none;
+}
+
+/* 夜晚显示太阳图标 */
+body.dark-mode .mode-toggle .moon {
+    display: none;
+}
+body.dark-mode .mode-toggle .sun {
+    display: inline-block;
+}
+
+/* 夜晚模式样式 */
+body.dark-mode {
+    background-color: #1a1a1a;
+    color: #f0f0f0;
+}
+
+body.dark-mode .card {
+    background-color: #2d2d2d;
+    border-color: #444;
+}
+
+body.dark-mode .mode-toggle {
+    background-color: #444;
+    color: #ffd700; /* 太阳金色 */
 }
 </style>
 
 </head>
 <body>
 
-<h1>全球指数</h1>
+<!-- 图标按钮 -->
+<button class="mode-toggle" id="modeToggle">
+    <span class="icon moon">🌙</span>
+    <span class="icon sun">☀️</span>
+</button>
 
+<h1>全球指数</h1>
 <div id="app"></div>
 
 <script>
+// 初始化模式
+const initMode = () => {
+    const isDark = localStorage.getItem('darkMode') === 'true';
+    if (isDark) {
+        document.body.classList.add('dark-mode');
+    }
+};
 
+// 切换模式
+const toggleMode = () => {
+    const isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', isDark);
+};
+
+// 修复这里：调用正确的函数名
+initMode();
+document.getElementById('modeToggle').addEventListener('click', toggleMode);
+
+// 加载数据
 fetch('./data.json')
 .then(r => r.json())
 .then(data => {
-
     const app = document.getElementById('app')
-
     data.forEach(item => {
-
         app.innerHTML += `
             <div class="card">
                 <h2>${item.name}</h2>
@@ -47,7 +132,7 @@ fetch('./data.json')
         `
     })
 })
-
+.catch(err => console.error('加载数据失败:', err));
 </script>
 
 </body>
