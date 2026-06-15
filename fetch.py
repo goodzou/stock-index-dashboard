@@ -73,7 +73,7 @@ def parse_a_stock(parts):
         "price": parts[1],
         "change": parts[2],
         "percent": parts[3],
-        "time": "A股实时"
+        "time": "缅A实时"
     }
 
 def parse_jp(parts):
