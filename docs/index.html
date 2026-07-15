@@ -82,6 +82,20 @@ body.dark-mode .mode-toggle {
     background-color: #444;
     color: #ffd700; /* 太阳金色 */
 }
+
+/* number color */
+/* --- 新增的涨跌颜色样式 --- */
+.positive {
+    color: #28a745; /* 绿色 */
+}
+
+.negative {
+    color: #dc3545; /* 红色 */
+}
+
+.neutral {
+    color: #6c757d; /* 中性色，例如灰色 */
+}
 </style>
 
 </head>
@@ -96,6 +110,7 @@ body.dark-mode .mode-toggle {
 <h1>全球指数</h1>
 <div id="app"></div>
 
+<!--
 <script>
 // 初始化模式
 const initMode = () => {
@@ -134,6 +149,64 @@ fetch('./data.json')
 })
 .catch(err => console.error('加载数据失败:', err));
 </script>
+-->
+<script>
+    // 初始化模式
+const initMode = () => {
+    const isDark = localStorage.getItem('darkMode') === 'true';
+    if (isDark) {
+        document.body.classList.add('dark-mode');
+    }
+};
 
+// 切换模式
+const toggleMode = () => {
+    const isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('darkMode', isDark);
+};
+
+// 颜色处理函数
+const getColorClass = (change) => {
+    change = parseFloat(change);
+    if (typeof change === 'number') {
+        if (change > 0) {
+            return 'positive'; // 涨，绿色
+        } else if (change < 0) {
+            return 'negative'; // 跌，红色
+        } else {
+            return 'neutral'; // 持平，默认色
+        }
+    }
+    return 'neutral';
+};
+
+
+initMode();
+document.getElementById('modeToggle').addEventListener('click', toggleMode);
+
+// 加载数据
+fetch('./data.json')
+.then(r => r.json())
+.then(data => {
+    const app = document.getElementById('app');
+
+    data.forEach(item => {
+        const colorClass = getColorClass(item.change); // 计算颜色类
+
+        // 构建动态的 HTML 结构，添加了动态 class
+        app.innerHTML += `
+            <div class="card">
+                <h2>${item.name}</h2>
+                <p>最新: <span class="${colorClass}">${item.price}</span></p>
+                <p>涨跌: <span class="${colorClass}">${item.change}</span></p>
+                <p>涨幅: <span class="${colorClass}">${item.percent}%</span></p>
+                <p>更新时间: ${item.time}</p>
+            </div>
+        `;
+    });
+})
+.catch(err => console.error('加载数据失败:', err));
+
+</script>
 </body>
 </html>
