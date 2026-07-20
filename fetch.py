@@ -7,7 +7,6 @@ from pathlib import Path
 # =========================
 
 CODES = {
-
     # 美股
     "gb_dji": "US",
     "gb_ixic": "US",
@@ -22,6 +21,8 @@ CODES = {
     # 港股
     "rt_hkHSI": "HK",
     # "hkHSI": "HK",
+    # South Kearia
+    "b_KOSPI": "KR",
     # A股
     "s_sh000001": "CN",
     "s_sz399001": "CN",
@@ -31,7 +32,7 @@ CODES = {
     # France
     "b_CAC": "FR",
     # Australia
-    "b_AS30": "AS"
+    "znb_AS51": "AS",
 }
 
 # =========================
@@ -102,6 +103,15 @@ def parse_tw(parts):
         "time": parts[6]+' '+parts[7]
     }
 
+def parse_kr(parts):
+    return {
+        "name": parts[0],
+        "price": parts[1],
+        "change": parts[2],
+        "percent": parts[3],
+        "time": parts[6]+' '+parts[7]
+    }
+
 def parse_uk(parts):
     return {
         "name": "英国" + parts[0],
@@ -135,7 +145,7 @@ def parse_as(parts):
         "price": parts[1],
         "change": parts[2],
         "percent": parts[3],
-        "time": "今日 " + parts[5]
+        "time": parts[6]+' '+parts[7]
     }
 # =========================
 # 映射
@@ -151,6 +161,7 @@ PARSERS = {
     "DE": parse_de,
     "FR": parse_fr,
     "AS": parse_as,
+    "KR": parse_kr,
 }
 # =========================
 # 主逻辑
@@ -169,7 +180,7 @@ for line in lines:
             continue
 
         parts = data.split(',')
-        # print(parts)
+        print(parts)
         # 找市场类型
         market_type = CODES.get(code)
 
